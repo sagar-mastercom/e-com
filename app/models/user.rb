@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  validates :email, presence: true
+  validates :encrypted_password , length: { in: 8..128 }
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   devise :database_authenticatable, :registerable, :validatable,:trackable,

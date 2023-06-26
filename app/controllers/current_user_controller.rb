@@ -4,6 +4,13 @@ class CurrentUserController < ApplicationController
     render json: current_user, status: :ok
   end
 
+  def all_users
+    @users = User.all
+    render json: {
+      'users':@users
+    }
+  end
+
   def update_user
     puts "Update User Status : #{current_user.id}"
 
