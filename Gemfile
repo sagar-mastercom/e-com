@@ -58,3 +58,4 @@ gem 'fast_jsonapi'
 gem 'faker'
 gem "sidekiq", "~> 7.1"
 gem 'redis'
+
