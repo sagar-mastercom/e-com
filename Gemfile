@@ -59,3 +59,5 @@ gem 'faker'
 gem "sidekiq", "~> 7.1"
 gem 'redis'
 
+gem 'rswag-api'
+gem 'rswag-ui'

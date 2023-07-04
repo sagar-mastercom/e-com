@@ -1,6 +1,12 @@
+require 'sidekiq/web'
 Rails.application.routes.draw do
+  mount Rswag::Api::Engine => '/api-docs'
+
+  mount Rswag::Ui::Engine => '/swagger/api-docs'
+
+
   resources :products
-  require 'sidekiq/web'
+
   mount Sidekiq::Web => '/sidekiq'
 
   devise_for :users, path: '', path_names: {

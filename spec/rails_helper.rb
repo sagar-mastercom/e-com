@@ -71,3 +71,10 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :request
 end
+
+require 'rswag/specs'
+
+Rswag::Specs.configure do |config|
+  config.swagger_root = Rails.root.join('swagger').to_s
+  config.swagger_dry_run = false
+end

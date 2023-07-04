@@ -1,6 +1,7 @@
 class CurrentUserController < ApplicationController
   before_action :authenticate_user!
   def index
+    AsyncJob.perform_async
     render json: current_user, status: :ok
   end
 
