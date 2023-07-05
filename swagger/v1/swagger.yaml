@@ -1,0 +1,445 @@
+openapi: 3.0.3
+info:
+  title: Ecomv1 API
+  version: "1.0.0"
+
+
+#Add Paths (Routes)
+paths:
+#  ------------------------User Routes------------------------------
+  /signup:
+    post:
+      summary: User signup
+      tags:
+        - Users
+      operationId: userSignup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User signup successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+
+  /all_users:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Successful retrieval of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+      security:
+        - CookieAuth: [ ]
+
+  /login:
+    post:
+      summary: User login
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+        '401':
+          description: Unauthorized
+
+
+  /logout:
+    delete:
+      summary: User logout
+      tags:
+        - Users
+      operationId: logoutUser
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful logout
+        '401':
+          description: Unauthorized
+
+  /current_user:
+    get:
+      summary: Get current user information
+      tags:
+        - Users
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Successful retrieval of current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /update_user:
+    patch:
+      summary: Update current user information
+      tags:
+        - Users
+      operationId: updateUser
+      security:
+        - CookieAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: User information updated successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /password/forgot:
+    post:
+      summary: Forgot password
+      tags:
+        - Users
+      operationId: forgotPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: Password reset email sent successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - CookieAuth: [ ]
+
+  /password/reset:
+    post:
+      summary: Reset password
+      tags:
+        - Users
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '200':
+          description: Password reset successful
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - CookieAuth: [ ]
+
+#  ------------------------Product Routes------------------------------
+
+  /products:
+    post:
+      summary: Create a new product
+      tags:
+        - Products
+      operationId: createProduct
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: Get products
+      tags:
+        - Products
+      operationId: getProducts
+      parameters:
+        - name: min_price
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+          description: Minimum price filter
+        - name: max_price
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+          description: Maximum price filter
+      responses:
+        '200':
+          description: Successful retrieval of products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+      security:
+        - CookieAuth: [ ]
+#    get:
+#      summary: Get products
+#      operationId: getProducts
+#      tags:
+#        - Products
+#      responses:
+#        '200':
+#          description: Successful retrieval of products
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ProductList'
+#      security:
+#        - CookieAuth: [ ]
+
+  /products/{productId}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of the product to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful retrieval of the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a product
+      tags:
+        - Products
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Product deleted successfully
+      security:
+        - CookieAuth: [ ]
+
+#  ------------------------Define Components such as Schemas, SecuritySchemas------------------------------
+
+components:
+  #  -----------------------Schemas------------------------------
+  schemas:
+    #  ------------------------User Schemas------------------------------
+    SignupRequest:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserInput'
+
+    UserInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+
+    LoginRequest:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+
+    UserList:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+
+    PasswordResetRequest:
+      type: object
+      required:
+        - email
+        - token
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        token:
+          type: string
+        password:
+          type: string
+          minLength: 6
+
+  #  ------------------------Product Schemas------------------------------
+    ProductRequest:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+
+    ProductList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+
+  #  ------------------------Error Schema------------------------------
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+#  ------------------------Security Schema------------------------------
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: _ecomv1
+
+security:
+    - bearerAuth: [ ]
